@@ -114,9 +114,16 @@ public final class PatientSearchCommand implements BotCommand {
       }
     }
 
+    if(parameters.containsKey("fhir_id") && parameters.get("fhir_id") != null && parameters.get("fhir_id").get() != null) {
+      convertedParameters.put("fhir_id", parameters.get("fhir_id").get());
+      if(convertedParameters.get("fhir_id") !=null && !(convertedParameters.get("fhir_id") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","fhir_id", "String", parameters.get("fhir_id").get().getClass().getSimpleName()));
+      }
+    }
+
     command.setSessionMap(sessionMap);
     try {
-      Optional<Value> result =  Optional.ofNullable(command.action((String)convertedParameters.get("help"),(String)convertedParameters.get("sessionName"),(String)convertedParameters.get("address"),(String)convertedParameters.get("city"),(String)convertedParameters.get("state"),(String)convertedParameters.get("postal"),(String)convertedParameters.get("family"),(String)convertedParameters.get("given"),(String)convertedParameters.get("birthdate"),(String)convertedParameters.get("gender"),(String)convertedParameters.get("telecom")));
+      Optional<Value> result =  Optional.ofNullable(command.action((String)convertedParameters.get("help"),(String)convertedParameters.get("sessionName"),(String)convertedParameters.get("address"),(String)convertedParameters.get("city"),(String)convertedParameters.get("state"),(String)convertedParameters.get("postal"),(String)convertedParameters.get("family"),(String)convertedParameters.get("given"),(String)convertedParameters.get("birthdate"),(String)convertedParameters.get("gender"),(String)convertedParameters.get("telecom"),(String)convertedParameters.get("fhir_id")));
       return logger.traceExit(result);
     }
     catch (ClassCastException e) {

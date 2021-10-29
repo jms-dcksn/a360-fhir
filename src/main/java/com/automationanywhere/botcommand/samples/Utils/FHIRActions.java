@@ -40,50 +40,41 @@ public class FHIRActions {
                 JSONObject entry = (JSONObject) entries.get(i);
                 JSONObject resource = (JSONObject) entry.get("resource");
                 resMap.put("id", new StringValue(String.valueOf(resource.get("id"))));
+                JSONArray names = (JSONArray) resource.get("name");
+                JSONObject name = (JSONObject) names.get(0); //only getting first name object
+                resMap.put("name", new StringValue(String.valueOf(name.get("text"))));
                 resMap.put("gender", new StringValue(String.valueOf(resource.get("gender"))));
                 JSONObject maritalStatus = (JSONObject) resource.get("maritalStatus");
                 resMap.put("maritalStatus", new StringValue(String.valueOf(maritalStatus.get("text"))));
+                resMap.put("birthDate", new StringValue(String.valueOf(resource.get("birthDate"))));
+                //get home address
+                JSONArray addresses = (JSONArray) resource.get("address");
+                for (int j=0; j < addresses.size(); j++){
+                    JSONObject address = (JSONObject) addresses.get(j);
+                    if(String.valueOf(address.get("use")).equals("home")){
+                        List streets = (List) address.get("line");
+                        String street = (String) streets.get(0);
+                        resMap.put("street", new StringValue(street));
+                        resMap.put("city", new StringValue(String.valueOf(address.get("city"))));
+                        resMap.put("state", new StringValue(String.valueOf(address.get("state"))));
+                        resMap.put("postalCode", new StringValue(String.valueOf(address.get("postalCode"))));
+                        resMap.put("country", new StringValue(String.valueOf(address.get("country"))));
+                    } else {
+                        resMap.put("street", new StringValue("no home address found"));
+                        resMap.put("city", new StringValue(String.valueOf(address.get("no home address found"))));
+                        resMap.put("state", new StringValue(String.valueOf(address.get("no home address found"))));
+                        resMap.put("postalCode", new StringValue(String.valueOf(address.get("no home address found"))));
+                        resMap.put("country", new StringValue(String.valueOf(address.get("no home address found"))));
+                    }
+                }
+                //phone number
+                JSONArray telecom = (JSONArray) resource.get("telecom");
+                JSONObject phoneInfo = (JSONObject) telecom.get(0); //getting only first result
+                resMap.put("phone", new StringValue(String.valueOf(phoneInfo.get("value"))));
+                break; //ignoring array right now...
             }
         }
         return resMap;
     }
 
-    public static String createUser(String url, String token, String name, String department, String email, JSONArray addresses, String title, String password, String divisionId, String state) throws IOException {
-        url = "https://api." + url + "/api/v2/users";
-        String auth = "Bearer " + token;
-        JSONObject postBody = new JSONObject();
-        postBody.put("name", name);
-        postBody.put("department", department);
-        postBody.put("email", email);
-        postBody.put("addresses", addresses);
-        postBody.put("title", title);
-        postBody.put("password", password);
-        postBody.put("divisionId", divisionId);
-        postBody.put("state", state);
-        String response = HTTPRequest.SEND(auth, url, "POST", String.valueOf(postBody));
-        return response;
-    }
-
-
-    public static String addContactToList(String url, String token, String contactListId, List<Value> fields) throws IOException {
-        url = "https://api." + url + "/api/v2/outbound/contactlists/" + contactListId + "/contacts";
-        JSONObject jsonContactData = new JSONObject();
-
-        if(fields!=null && fields.size()>0){
-            for (Value element : fields){
-                Map<String, Value> customValuesMap = ((DictionaryValue)element).get();
-                String name = customValuesMap.containsKey("NAME") ? ((StringValue)customValuesMap.get("NAME")).get() : "";
-                String value = (customValuesMap.getOrDefault("VALUE", null) == null) ? null : ((StringValue)customValuesMap.get("VALUE")).get();
-                if(!value.equals(null)){
-                    jsonContactData.put(name, value);
-                }
-            }
-        }
-        String jsonBody = "[{ \"id\": \"\", \"contactListId\": \"" + contactListId + "\", \"data\": " + jsonContactData + ", \"callable\": true, \"phoneNumberStatus\": {}}]";
-        //System.out.println(jsonBody);
-        String auth = "Bearer " + token;
-        String response = "";
-        response = HTTPRequest.SEND(auth, url, "POST", jsonBody);
-        return response;
-    }
 }

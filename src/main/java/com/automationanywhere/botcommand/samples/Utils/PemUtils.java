@@ -74,8 +74,4 @@ public class PemUtils {
         throw new GeneralSecurityException("Not supported format of a private key");
     }
 
-
-
-
-
 }

@@ -85,7 +85,9 @@ public class PatientSearch {
             @Idx(index = "10", type = TEXT) @Pkg(label = "Gender", description = "The patient’s legal sex.")
                     String gender,
             @Idx(index = "11", type = TEXT) @Pkg(label = "Phone or Email", description = "The patient's phone number or email.")
-                    String telecom
+                    String telecom,
+            @Idx(index = "12", type = TEXT) @Pkg(label = "FHIR ID")
+                    String fhir_id
     ) throws IOException, ParseException {
         FHIRServer fhirServer = (FHIRServer) this.sessionMap.get(sessionName);
         String access_token = fhirServer.getToken();
@@ -101,6 +103,7 @@ public class PatientSearch {
         params.put("birthdate", birthdate);
         params.put("legal-sex", gender);
         params.put("telecom", telecom);
+        params.put("_id", fhir_id);
 
         Map<String, Value> resMap = FHIRActions.searchPatient(url, "Bearer " + access_token, params);
         return new DictionaryValue(resMap);

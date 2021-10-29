@@ -4,8 +4,8 @@
     "description": "[[description]]",
     "group": "com.automationanywhere",
     "artifactName": "FHIR",
-    "packageVersion": "1.0.0-20211024-202841",
-    "codeVersion": "1.0.0-20211024-202841",
+    "packageVersion": "1.0.0-20211027-170452",
+    "codeVersion": "1.0.0-20211027-170452",
     "author": "",
     "commands": [
         {
@@ -184,6 +184,11 @@
                     "name": "telecom",
                     "label": "Phone or Email",
                     "description": "The patient's phone number or email.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "fhir_id",
+                    "label": "FHIR ID",
                     "type": "TEXT"
                 }
             ]

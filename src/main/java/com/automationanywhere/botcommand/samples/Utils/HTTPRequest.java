@@ -43,7 +43,7 @@ public class HTTPRequest {
             throw new BotCommandException("Exception occurred making the request: " + e);
         }
         if(response.code() >= 400) {
-            throw new BotCommandException("Genesys could not complete the action. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
+            throw new BotCommandException("FHIR server could not complete the action. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
         }
         return Objects.requireNonNull(response.body()).string();
     }
@@ -105,7 +105,7 @@ public class HTTPRequest {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        MediaType mediaType = MediaType.parse("application/x-www-url-encoded");
+        MediaType mediaType = MediaType.parse("application/json");
         RequestBody requestBody = RequestBody.create(mediaType, body);
         Request request = new Request.Builder()
                 .url(url)
@@ -121,7 +121,7 @@ public class HTTPRequest {
             throw new BotCommandException("Exception occurred making the request: " + e);
         }
         if(response.code() >= 400) {
-            throw new BotCommandException("Genesys did not accept the request. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
+            throw new BotCommandException("FHIR server did not accept the request. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
         }
         return Objects.requireNonNull(response.body()).string();
     }
