@@ -48,7 +48,7 @@ import org.json.simple.parser.JSONParser;
  */
 @BotCommand
 @CommandPkg(label = "Start Session",
-		description = "Starts Session with FHIR APIs",
+		description = "Starts Session with FHIR APIs using SMART Backend Services Authorization",
 		icon = "fhir2.svg",
 		name = "startFHIRsession",
 		node_label = "Start Session {{sessionName}}",
@@ -68,7 +68,8 @@ public class A_StartSession {
 			@Idx(index = "2", type = TEXT) @Pkg(label = "URL", description = "https://{hostname}/{instance}/ " +
 					"e.g. for EPIC sandbox https://fhir.epic.com/interconnect-fhir-oauth/") @NotEmpty String url,
 			@Idx(index = "3", type = CREDENTIAL) @Pkg(label = "Client ID") @NotEmpty SecureString clientId,
-			@Idx(index = "4", type = AttributeType.FILE) @Pkg(label = "Private Key File (.pem)") @NotEmpty String pemFile
+			@Idx(index = "4", type = AttributeType.FILE) @Pkg(label = "Private Key File (.pem)", description="Private Key file associated with the RSA public key " +
+					"used to register the application with the FHIR server") @NotEmpty String pemFile
 	) throws GeneralSecurityException, IOException {
 		String ins_clientId = clientId.getInsecureString();
 		String response= "";

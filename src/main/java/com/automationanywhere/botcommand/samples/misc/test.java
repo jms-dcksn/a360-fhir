@@ -69,35 +69,111 @@ public class test {
 
         //?family=Lin&given=Derrick&birthdate=1973-06-03"
         String patientUrl = url + "api/FHIR/R4/Patient";
-        String body = "{\"resourceType\":\"Patient\"," +
-                "\"identifier\":[{\"use\":\"usual\",\"system\":\"urn:oid:2.16.840.1.113883.4.1\",\"value\":\"161-71-1711\"}]," +
+        /*String body = "{\"resourceType\":\"Patient\"," +
+                "\"identifier\":[{\"use\":\"usual\",\"system\":\"urn:oid:2.16.840.1.113883.4.1\",\"value\":\"161-91-1911\"}]," +
                 "\"active\":\"true\",\"name\":[{\"use\":\"usual\",\"family\":\"FHIRcreate\",\"given\":[\"Elle\"]}]," +
                 "\"telecom\":[{\"system\":\"phone\",\"value\":\"321-555-1234\",\"use\":\"home\"},{\"system\":\"email\",\"value\":\"elle.FHIRcreate@fhirtest.edu\"}]," +
                 "\"gender\":\"female\",\"birthDate\":\"1988-07-30\",\"address\":[{\"use\":\"home\",\"line\":[\"100 Milky Way\"]," +
                 "\"city\":\"Verona\",\"state\":\"WI\",\"postalCode\":\"53593\",\"country\":\"USA\"}]," +
-                "\"maritalStatus\":{\"text\":\"Single\"}," +
+                "\"maritalStatus\":{\"text\":\"Single\"}}"; /* +
                 "\"generalPractitioner\":[{\"display\":\"Physician Family Medicine, MD\",\"reference\":\"eM5CWtq15N0WJeuCet5bJlQ3\"}]," +
                 "\"extension\":[{\"url\":\"http://open.epic.com/FHIR/STU3/StructureDefinition/patient-preferred-provider-language\"," +
                 "\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:2.16.840.1.113883.6.99\",\"code\":\"ja\"}],\"text\":\"Japanese\"}}," +
-                "{\"url\":\"http://open.epic.com/FHIR/STU3/StructureDefinition/patient-preferred-provider-sex\",\"valueCode\":\"female\"}]}";
+                "{\"url\":\"http://open.epic.com/FHIR/STU3/StructureDefinition/patient-preferred-provider-sex\",\"valueCode\":\"female\"}]}";*/
 
-        String patient = HTTPRequest.SEND("Bearer " + accessToken, patientUrl, "POST", body);
-        System.out.println(patient);
+        //String patient = HTTPRequest.CREATE("Bearer " + accessToken, patientUrl, "POST", body);
+        //List patientResults = new ArrayList();
+        //patientResults = List.of(patient.split("/"));
+        //System.out.println(patientResults.get(1));
+
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("ssn", "161-96-0987");
+        params.put("street", "321 Nora");
+        params.put("city", "Argyle");
+        params.put("postalCode", "76225");
+        params.put("state", "TX");
+        params.put("country", "USA");
+        params.put("family", "FHIRcreate");
+        params.put("given", "Bill");
+        params.put("birthDate", "1971-09-08");
+        params.put("gender", "male");
+        params.put("phone", "555-345-5654");
+        params.put("email", "bduncan@healthcare.com");
+        params.put("maritalStatus", "Single");
+
+        String fhir_id = FHIRActions.createPatient(url, "Bearer " + accessToken, params);
+        System.out.println(fhir_id);
 
         /*Map<String, String> params = new LinkedHashMap<>();
         params.put("address", "");
         params.put("address-city", "");
         params.put("address-postalcode", "");
         params.put("address-state", "");
-        params.put("family", "");
-        params.put("given", "");
-        params.put("birthdate", "");
-        params.put("gender", "");
+        params.put("family", "Lin");
+        params.put("given", "Derrick");
+        params.put("birthDate", "1981-09-08");
+        params.put("gender", "male");
         params.put("legal-sex", "");
         params.put("partner-name", "");
         params.put("telecom", "");
-        params.put("_id", "eq081-VQEgP8drUUqCWzHfw3");
+        params.put("ssn", "111-23-3335");*/
 
+        /*JSONObject body = new JSONObject();
+        body.put("resourceType", "Patient");
+        //Code to build JSON structure for body...
+        body.put("active", "true");
+
+        //JSON structure for SSN...
+        JSONArray identifier = new JSONArray();
+        JSONObject jsonIdentifier = new JSONObject();
+        jsonIdentifier.put("use", "usual");
+        jsonIdentifier.put("system", "urn:oid:2.16.840.1.113883.4.1");
+        jsonIdentifier.put("value", params.get("ssn"));
+        identifier.add(jsonIdentifier);
+        body.put("identifier", identifier);
+        JSONArray name = new JSONArray();
+        JSONObject nameDetails = new JSONObject();
+        nameDetails.put("use", "usual");
+        nameDetails.put("family", params.get("family"));
+        List<String> givenName = new ArrayList<>();
+        givenName.add(params.get("given"));
+        nameDetails.put("given", givenName);
+        name.add(nameDetails);
+        body.put("name", name);
+        //
+        //JSON array for telecom
+        JSONArray telecom = new JSONArray();
+        JSONObject phone = new JSONObject();
+        phone.put("system", "phone");
+        phone.put("value", params.get("phone"));
+        phone.put("use", "home");
+        JSONObject email = new JSONObject();
+        email.put("system", "email");
+        email.put("value", params.get("email"));
+        telecom.add(phone);
+        telecom.add(email);
+        body.put("telecom", telecom);
+
+        //JSOn Array for address
+        JSONArray address = new JSONArray();
+        JSONObject addressDetails = new JSONObject();
+        addressDetails.put("use", "home");
+        List<String> line = new ArrayList<>();
+        line.add(params.get("street")); //params to hole street address at key 'street'
+        addressDetails.put("line", line);
+        addressDetails.put("city", params.get("city"));
+        addressDetails.put("state", params.get("state"));
+        addressDetails.put("postalCode", params.get("postalCode"));
+        addressDetails.put("country", params.get("country"));
+        address.add(addressDetails);
+        body.put("address", address);
+
+        body.put("gender", params.get("gender"));
+        body.put("birthDate", params.get("birthDate"));
+
+        System.out.println(body.toString());
+
+/*
         Map<String, Value> resMap = new LinkedHashMap<>();
 
         String searchResponse = HTTPRequest.HttpGetWithParams(patientUrl, "Bearer " + accessToken, params);

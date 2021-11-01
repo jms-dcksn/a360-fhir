@@ -4,8 +4,8 @@
     "description": "[[description]]",
     "group": "com.automationanywhere",
     "artifactName": "FHIR",
-    "packageVersion": "1.0.0-20211027-170452",
-    "codeVersion": "1.0.0-20211027-170452",
+    "packageVersion": "1.0.0-20211101-150241",
+    "codeVersion": "1.0.0-20211101-150241",
     "author": "",
     "commands": [
         {
@@ -39,7 +39,7 @@
         {
             "name": "startFHIRsession",
             "label": "Start Session",
-            "description": "Starts Session with FHIR APIs",
+            "description": "Starts Session with FHIR APIs using SMART Backend Services Authorization",
             "nodeLabel": "Start Session {{sessionName}}",
             "minimumControlRoomVersion": "8750",
             "minimumBotAgentVersion": "20.11",
@@ -86,12 +86,133 @@
                 {
                     "name": "pemFile",
                     "label": "Private Key File (.pem)",
+                    "description": "Private Key file associated with the RSA public key used to register the application with the FHIR server",
                     "type": "FILE",
                     "rules": [
                         {
                             "name": "NOT_EMPTY"
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "name": "CreatePatient",
+            "label": "Create Patient",
+            "description": "Returns Patient Details",
+            "nodeLabel": "Create a new patient in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.PatientCreateCommand",
+            "groupLabel": "Patients",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "STRING",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a string",
+            "returnRequired": false,
+            "returnDescription": "Returns the FHIR ID in a string",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "Patient Search",
+                    "description": "The FHIR Patient resource defines demographics, care providers, and other administrative information about a person receiving care at a health organization. The Patient.Create web service creates a new patient record or returns an existing one:\n\n- If a single high-threshold match is found in the target environment based on Identity IDs or demographics, the service returns the existing patient.\n- If a match is found in external EMPI, the service creates a shell patient in the target environment and returns it.\n- If no match is found, the service creates a net new patient in the target environment.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "ssn",
+                    "label": "Identifier (SSN)",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "family",
+                    "label": "Family (Last) Name",
+                    "description": "The patient's family (last) name.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "given",
+                    "label": "Given Name",
+                    "description": "The patient's given name. May include first and middle names.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "birthdate",
+                    "label": "Birthdate",
+                    "description": "The patient's date of birth in the format YYYY-MM-DD.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "street",
+                    "label": "Address",
+                    "description": "The patient's street address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "city",
+                    "label": "City",
+                    "description": "The city for patient's home address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "state",
+                    "label": "State",
+                    "description": "The state for the patient's home address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "postal",
+                    "label": "Postal Code",
+                    "description": "The postal code for patient's home address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "country",
+                    "label": "Country",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "gender",
+                    "label": "Gender",
+                    "description": "The patient\u2019s legal sex.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "maritalStatus",
+                    "label": "Marital Status",
+                    "description": "The patient's marital status. e.g. 'single' or 'married'",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "phone",
+                    "label": "Phone",
+                    "description": "The patient's phone number",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "email",
+                    "label": "Email",
+                    "description": "The patient's email",
+                    "type": "TEXT"
                 }
             ]
         },

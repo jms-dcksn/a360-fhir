@@ -74,7 +74,8 @@ public class HTTPRequest {
         if(response.code() >= 400) {
             throw new BotCommandException("Could not complete the action. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
         }
-        return Objects.requireNonNull(response.body()).string();
+
+        return response.body().string();
     }
 
     public static String oAuthMethod(String url, String jwt) throws IOException {
@@ -101,7 +102,7 @@ public class HTTPRequest {
         return Objects.requireNonNull(response.body()).string();
     }
 
-    public static String SEND(String auth, String url, String method, String body) throws IOException {
+    public static String CREATE(String auth, String url, String method, String body) throws IOException {
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -123,7 +124,8 @@ public class HTTPRequest {
         if(response.code() >= 400) {
             throw new BotCommandException("FHIR server did not accept the request. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
         }
-        return Objects.requireNonNull(response.body()).string();
+        //System.out.println(response.code());
+        return Objects.requireNonNull(response.header("Location"));
     }
 
     public static String POSTwFile(String url, String filepath) throws IOException {

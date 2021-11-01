@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.opensaml.xml.signature.J;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -77,4 +78,71 @@ public class FHIRActions {
         return resMap;
     }
 
+    public static String createPatient(String url, String auth, Map<String, String> params) throws IOException, ParseException {
+        String patientUrl = url + "api/FHIR/R4/Patient";
+        JSONObject body = new JSONObject();
+        body.put("resourceType", "Patient");
+        //Code to build JSON structure for body...
+        body.put("active", "true");
+        //JSON structure for SSN...
+        JSONArray identifier = new JSONArray();
+        JSONObject jsonIdentifier = new JSONObject();
+        jsonIdentifier.put("use", "usual");
+        jsonIdentifier.put("system", "urn:oid:2.16.840.1.113883.4.1");
+        jsonIdentifier.put("value", params.get("ssn"));
+        identifier.add(jsonIdentifier);
+        body.put("identifier", identifier);
+
+        //JSON array for name...
+        JSONArray name = new JSONArray();
+        JSONObject nameDetails = new JSONObject();
+        nameDetails.put("use", "usual");
+        nameDetails.put("family", params.get("family"));
+        List<String> givenName = new ArrayList<>();
+        givenName.add(params.get("given"));
+        nameDetails.put("given", givenName);
+        name.add(nameDetails);
+        body.put("name", name);
+
+        //JSON array for telecom
+        JSONArray telecom = new JSONArray();
+        JSONObject phone = new JSONObject();
+        phone.put("system", "phone");
+        phone.put("value", params.get("phone"));
+        phone.put("use", "home");
+        JSONObject email = new JSONObject();
+        email.put("system", "email");
+        email.put("value", params.get("email"));
+        telecom.add(phone);
+        telecom.add(email);
+        body.put("telecom", telecom);
+
+        body.put("gender", params.get("gender"));
+        body.put("birthDate", params.get("birthDate"));
+
+        //JSOn Array for address
+        JSONArray address = new JSONArray();
+        JSONObject addressDetails = new JSONObject();
+        addressDetails.put("use", "home");
+        List<String> line = new ArrayList<>();
+        line.add(params.get("street")); //params to hole street address at key 'street'
+        addressDetails.put("line", line);
+        addressDetails.put("city", params.get("city"));
+        addressDetails.put("state", params.get("state"));
+        addressDetails.put("postalCode", params.get("postalCode"));
+        addressDetails.put("country", params.get("country"));
+        address.add(addressDetails);
+        body.put("address", address);
+
+        //marital status
+        JSONObject maritalStatus = new JSONObject();
+        maritalStatus.put("text", params.get("maritalStatus"));
+        body.put("maritalStatus", maritalStatus);
+
+        //System.out.println(body);
+        String response = HTTPRequest.CREATE(auth, patientUrl, "POST", body.toString());
+        List patientResults = new ArrayList();
+        patientResults = List.of(response.split("/"));
+        return String.valueOf(patientResults.get(1));
+    }
 }
