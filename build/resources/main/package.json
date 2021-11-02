@@ -4,8 +4,8 @@
     "description": "[[description]]",
     "group": "com.automationanywhere",
     "artifactName": "FHIR",
-    "packageVersion": "1.0.0-20211101-150241",
-    "codeVersion": "1.0.0-20211101-150241",
+    "packageVersion": "1.0.0-20211102-154838",
+    "codeVersion": "1.0.0-20211102-154838",
     "author": "",
     "commands": [
         {
@@ -231,7 +231,7 @@
             "returnSubtype": "UNDEFINED",
             "returnLabel": "Assign output to a dictionary",
             "returnRequired": false,
-            "returnDescription": "Keys for dictionary:'results', 'id'",
+            "returnDescription": "Keys for dictionary: 'id', 'name', 'gender', 'maritalStatus', 'birthDate', \" +\n                \"'street', 'city', 'state', 'postalCode', 'country', 'phone'",
             "attributes": [
                 {
                     "name": "help",
@@ -311,6 +311,56 @@
                     "name": "fhir_id",
                     "label": "FHIR ID",
                     "type": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "ReadCoverage",
+            "label": "Coverage Lookup",
+            "description": "Returns Coverage Details",
+            "nodeLabel": "Read coverage in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.ReadCoverageCommand",
+            "groupLabel": "Coverage",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "DICTIONARY",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a dictionary",
+            "returnRequired": false,
+            "returnDescription": "Keys for dictionary: 'subscriber', 'coverageStart', 'coverageEnd', 'payer', 'beneficiary', 'subscriberID', 'relationship', 'patientFHIRId'",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "Patient Search",
+                    "description": "Retrieves a Coverage resource by its FHIR ID. Coverage resources correspond to coverage records in Epic.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "fhirId",
+                    "label": "FHIR ID",
+                    "description": "The FHIR Coverage ID",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
                 }
             ]
         }

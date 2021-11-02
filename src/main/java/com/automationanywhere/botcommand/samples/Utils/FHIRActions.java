@@ -145,4 +145,39 @@ public class FHIRActions {
         patientResults = List.of(response.split("/"));
         return String.valueOf(patientResults.get(1));
     }
+
+    public static Map<String, Value> readCoverage(String url, String auth, String fhirID) throws IOException, ParseException {
+        String coverageUrl = url + "api/FHIR/R4/Coverage/" + fhirID;
+        Map<String, Value> resMap = new LinkedHashMap<>();
+
+        String coverageResponse = HTTPRequest.HttpGetWithParams(coverageUrl, auth, null);
+        Object obj = new JSONParser().parse(coverageResponse);
+        JSONObject response = (JSONObject) obj;
+        //System.out.println(response);
+        //subscriber
+        JSONObject subscriber = (JSONObject) response.get("subscriber");
+        resMap.put("subscriber", new StringValue(String.valueOf(subscriber.get("display"))));
+        String patientID = (String) subscriber.get("reference");
+        String patientFHIRId = patientID.split("/")[1];
+        resMap.put("patientFHIRId", new StringValue(patientFHIRId));
+        //coverage period
+        JSONObject period = (JSONObject) response.get("period");
+        resMap.put("coverageStart", new StringValue(String.valueOf(period.get("start"))));
+        resMap.put("coverageEnd", new StringValue(String.valueOf(period.get("end"))));
+        //payer
+        JSONArray payors = (JSONArray) response.get("payor");
+        JSONObject payer = (JSONObject) payors.get(0); //only getting first payor right now...
+        resMap.put("payer", new StringValue(String.valueOf(payer.get("display"))));
+        //beneficiary
+        JSONObject beneficiary = (JSONObject) response.get("beneficiary");
+        resMap.put("beneficiary", new StringValue(String.valueOf(beneficiary.get("display"))));
+        //subsciber ID
+        resMap.put("subscriberID", new StringValue(String.valueOf(response.get("subscriberId"))));
+        //relationship
+        JSONObject relationship = (JSONObject) response.get("relationship");
+        resMap.put("relationship", new StringValue(String.valueOf(relationship.get("text"))));
+        //Patient FHIR ID
+
+        return resMap;
+    }
 }

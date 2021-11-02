@@ -47,7 +47,8 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
         //text_color = "#7B848B" ,
         return_label = "Assign output to a dictionary",
         return_type = DataType.DICTIONARY,
-        return_description = "Keys for dictionary:'results', 'id'")
+        return_description = "Keys for dictionary: 'id', 'name', 'gender', 'maritalStatus', 'birthDate', \" +\n" +
+                "                \"'street', 'city', 'state', 'postalCode', 'country', 'phone'")
 
 public class PatientSearch {
     @Sessions
