@@ -4,6 +4,7 @@ import com.automationanywhere.botcommand.data.Value;
 import com.automationanywhere.botcommand.data.impl.DictionaryValue;
 import com.automationanywhere.botcommand.data.impl.StringValue;
 import com.automationanywhere.botcommand.exception.BotCommandException;
+import org.apache.velocity.runtime.directive.Parse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -157,27 +158,77 @@ public class FHIRActions {
         //subscriber
         JSONObject subscriber = (JSONObject) response.get("subscriber");
         resMap.put("subscriber", new StringValue(String.valueOf(subscriber.get("display"))));
-        String patientID = (String) subscriber.get("reference");
-        String patientFHIRId = patientID.split("/")[1];
-        resMap.put("patientFHIRId", new StringValue(patientFHIRId));
+        if(subscriber.containsKey("reference")) {
+            String patientID = (String) subscriber.get("reference");
+            String patientFHIRId = patientID.split("/")[1];
+            resMap.put("patientFHIRId", new StringValue(patientFHIRId));
+        } else{ resMap.put("patientFHIRId", new StringValue("No Value")); }
         //coverage period
         JSONObject period = (JSONObject) response.get("period");
         resMap.put("coverageStart", new StringValue(String.valueOf(period.get("start"))));
         resMap.put("coverageEnd", new StringValue(String.valueOf(period.get("end"))));
         //payer
         JSONArray payors = (JSONArray) response.get("payor");
-        JSONObject payer = (JSONObject) payors.get(0); //only getting first payor right now...
-        resMap.put("payer", new StringValue(String.valueOf(payer.get("display"))));
+        if( payors.size() >= 1) {
+            JSONObject payer = (JSONObject) payors.get(0); //only getting first payor right now...
+            resMap.put("payer", new StringValue(String.valueOf(payer.get("display"))));
+        } else { resMap.put("payer", new StringValue("No value for payer found")); }
         //beneficiary
         JSONObject beneficiary = (JSONObject) response.get("beneficiary");
         resMap.put("beneficiary", new StringValue(String.valueOf(beneficiary.get("display"))));
-        //subsciber ID
+        //subscriber ID
         resMap.put("subscriberID", new StringValue(String.valueOf(response.get("subscriberId"))));
         //relationship
-        JSONObject relationship = (JSONObject) response.get("relationship");
-        resMap.put("relationship", new StringValue(String.valueOf(relationship.get("text"))));
+        if(response.containsKey("relationship")) {
+            JSONObject relationship = (JSONObject) response.get("relationship");
+            resMap.put("relationship", new StringValue(String.valueOf(relationship.get("text"))));
+        }
+        else{ resMap.put("relationship", new StringValue("No Value")); }
         //Patient FHIR ID
 
         return resMap;
+    }
+
+    public static List<Value> searchCoverage(String url, String auth, String patientID, String beneficiaryID) throws IOException, ParseException {
+        String coverageUrl = url + "api/FHIR/R4/Coverage?patient=" + patientID + "&beneficiary=" + beneficiaryID;
+        List<Value> coverageIds = new ArrayList<>();
+
+        String coverageResponse = HTTPRequest.HttpGetWithParams(coverageUrl, auth, null);
+        Object obj = new JSONParser().parse(coverageResponse);
+        JSONObject response = (JSONObject) obj;
+        //System.out.println(response);
+        //entry list
+        JSONArray entries = (JSONArray) response.get("entry");
+        for (int i=0; i < entries.size(); i++) {
+            JSONObject entry = (JSONObject) entries.get(i);
+            JSONObject resource = (JSONObject) entry.get("resource");
+            coverageIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+        }
+        return coverageIds;
+    }
+
+    public static List<Value> searchHealthConcern(String url, String auth, String patientID, String status) throws IOException, ParseException {
+        String flagUrl = url + "api/FHIR/R4/Flag?category=health-concern&patient="+ patientID + "&status=" + status;
+        List<Value> healthConcernIds = new ArrayList<>();
+
+        String coverageResponse = HTTPRequest.HttpGetWithParams(flagUrl, auth, null);
+        System.out.println(coverageResponse);
+        Object obj = new JSONParser().parse(coverageResponse);
+        JSONObject response = (JSONObject) obj;
+        //System.out.println(response);
+        //entry list
+        JSONArray entries = (JSONArray) response.get("entry");
+        for (int i=0; i < entries.size(); i++) {
+            JSONObject entry = (JSONObject) entries.get(i);
+            JSONObject resource = (JSONObject) entry.get("resource");
+            healthConcernIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+        }
+        return healthConcernIds;
+    }
+
+    public static String searchListAllergy (String url, String auth, String patientID) throws IOException, ParseException {
+        String listURL = url + "api/FHIR/R4/List?code=allergies&patient=" + patientID;
+        String response = HTTPRequest.HttpGetWithParams(listURL, auth, null);
+        return response;
     }
 }

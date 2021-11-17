@@ -78,6 +78,32 @@ public class HTTPRequest {
         return response.body().string();
     }
 
+    public static String oAuthMethodSecret(String url, String clientId, String clientSecret, String ehrSourceId) throws IOException {
+        String clientAuth = clientId + ":" + clientSecret;
+        String basicAuthPayload = "Basic " + Base64.getEncoder().encodeToString(clientAuth.getBytes());
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&scope=system/Organization.read system/Patient.read");
+        Request request = new Request.Builder()
+                .url(url + "tenants/" + ehrSourceId + "/protocols/oauth2/profiles/smart-v1/token")
+                .method("POST", body)
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", basicAuthPayload)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+        Response response;
+        try {
+            response = client.newCall(request).execute();
+        } catch (Exception e) {
+            throw new BotCommandException("Exception occurred making the request: " + e);
+        }
+        if(response.code() >= 400) {
+            throw new BotCommandException("Server did not accept the request. Code: " + response.code() + "Response Body: " + Objects.requireNonNull(response.body()).string());
+        }
+        return Objects.requireNonNull(response.body()).string();
+    }
+
     public static String oAuthMethod(String url, String jwt) throws IOException {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();

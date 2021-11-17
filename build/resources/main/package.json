@@ -4,8 +4,8 @@
     "description": "[[description]]",
     "group": "com.automationanywhere",
     "artifactName": "FHIR",
-    "packageVersion": "1.0.0-20211102-154838",
-    "codeVersion": "1.0.0-20211102-154838",
+    "packageVersion": "1.0.0-20211117-083449",
+    "codeVersion": "1.0.0-20211117-083449",
     "author": "",
     "commands": [
         {
@@ -115,7 +115,7 @@
             "attributes": [
                 {
                     "name": "help",
-                    "label": "Patient Search",
+                    "label": "Create Patient",
                     "description": "The FHIR Patient resource defines demographics, care providers, and other administrative information about a person receiving care at a health organization. The Patient.Create web service creates a new patient record or returns an existing one:\n\n- If a single high-threshold match is found in the target environment based on Identity IDs or demographics, the service returns the existing patient.\n- If a match is found in external EMPI, the service creates a shell patient in the target environment and returns it.\n- If no match is found, the service creates a net new patient in the target environment.",
                     "type": "HELP"
                 },
@@ -333,7 +333,7 @@
             "attributes": [
                 {
                     "name": "help",
-                    "label": "Patient Search",
+                    "label": "Read Coverage",
                     "description": "Retrieves a Coverage resource by its FHIR ID. Coverage resources correspond to coverage records in Epic.",
                     "type": "HELP"
                 },
@@ -361,6 +361,60 @@
                             "name": "NOT_EMPTY"
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "name": "SearchCoverage",
+            "label": "Coverage Search",
+            "description": "Returns Coverage FHIR IDs",
+            "nodeLabel": "Search coverage by patient in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.SearchCoverageCommand",
+            "groupLabel": "Coverage",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "LIST",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a list",
+            "returnRequired": false,
+            "returnDescription": "List of strings containing the found coverage FHIR IDs",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "Coverage Search",
+                    "description": "Searches for Coverage resources.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "patientId",
+                    "label": "Patient FHIR ID",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "beneficiaryId",
+                    "label": "Beneficiary FHIR ID",
+                    "type": "TEXT"
                 }
             ]
         }

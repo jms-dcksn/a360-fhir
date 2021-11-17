@@ -2,42 +2,45 @@ package com.automationanywhere.botcommand.samples.misc;
 
 import java.security.PrivateKey;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import com.automationanywhere.botcommand.data.Value;
-import com.automationanywhere.botcommand.data.impl.StringValue;
 import com.automationanywhere.botcommand.samples.Utils.FHIRActions;
 import com.automationanywhere.botcommand.samples.Utils.HTTPRequest;
-import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
-import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemReader;
 
 import java.io.File;
 
 
 import com.automationanywhere.botcommand.samples.Utils.PemUtils;
-import com.mypurecloud.sdk.v2.api.UsersApi;
-import com.mypurecloud.sdk.v2.model.User;
-import com.mypurecloud.sdk.v2.model.UserMe;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
-import java.security.Key;
 
 
 public class test {
 
     public static void main(String[] args) throws Exception {
 
-        String clientId = "9dca6746-d56e-4d88-9736-ad94a608ddc1";
+        /*String url = "https://authorization.cerner.com/";
+        String clientId = "0bcd3578-0e3b-46e5-81f8-36baebf63c49";
+        String clientSecret = "vlg4zf0T4jWDzAecst415g7leEKVG2sr";
+        String ehrSourceId = "ec2458f2-1e24-41c8-b71b-0e701af7583d";
+
+        String response = HTTPRequest.oAuthMethodSecret(url, clientId, clientSecret, ehrSourceId);
+        Object obj = new JSONParser().parse(response);
+        JSONObject jsonResponse = (JSONObject) obj;
+        String accessToken = (String) jsonResponse.get("access_token");
+        System.out.println(accessToken);*/
+
+
+        //***************EPIC Sandbox params**********************
+        String clientId = "c35e8cd6-a648-43aa-90f3-87970c3edbc4";
         String url = "https://fhir.epic.com/interconnect-fhir-oauth/";
 
         String authURL = url + "oauth2/token";
+
+        //*****************JWT Generation*****************************
         Instant now = Instant.now();
 
         // create  instance object
@@ -66,12 +69,13 @@ public class test {
         Object obj = new JSONParser().parse(response);
         JSONObject jsonResponse = (JSONObject) obj;
         String accessToken = (String) jsonResponse.get("access_token");
+        //System.out.println(accessToken);
+        //List<Value> map = FHIRActions.searchHealthConcern(url, "Bearer " + accessToken, "exXRmhbBlDmkQs7JHPE37Yw3", "");
+        //String coverageUrl = url + "api/FHIR/R4/Coverage/" + "e--AhULNwGXGTDcZWtA3mVZpExBlu51LQoy5Fgus54Tk3";
+        Map<String, Value> resMap = FHIRActions.readCoverage(url, "Bearer " + accessToken, "e--AhULNwGXGTDcZWtA3mVZpExBlu51LQoy5Fgus54Tk3");
 
-        //?family=Lin&given=Derrick&birthdate=1973-06-03"
-        Map<String, Value> coverage = FHIRActions.readCoverage(url, "Bearer " + accessToken, "eS72vnDj387lBv1vJqjUKhGFkkNw3RVMhZzABgnZ0kwk3");
-        System.out.println(coverage);
-
-
+        //String coverageResponse = HTTPRequest.HttpGetWithParams(coverageUrl, "Bearer " + accessToken, null);
+        System.out.println(resMap);
 
         /*Map<String, String> params = new LinkedHashMap<>();
         params.put("ssn", "161-96-0987");

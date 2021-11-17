@@ -44,7 +44,7 @@ public class ReadCoverage {
     @Execute
     public DictionaryValue action(
             @Idx(index = "1", type = HELP)
-            @Pkg(label = "Patient Search", description = "Retrieves a Coverage resource by its FHIR ID. Coverage resources correspond to coverage records in Epic.")
+            @Pkg(label = "Read Coverage", description = "Retrieves a Coverage resource by its FHIR ID. Coverage resources correspond to coverage records in Epic.")
                     String help,
             @Idx(index = "2", type = TEXT) @Pkg(label = "Session name", default_value_type = STRING, default_value = "Default")
             @NotEmpty String sessionName,

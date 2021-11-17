@@ -44,7 +44,7 @@ public class PatientCreate {
     @Execute
     public StringValue action(
             @Idx(index = "1", type = HELP)
-            @Pkg(label = "Patient Search", description = "The FHIR Patient resource defines demographics, care providers, " +
+            @Pkg(label = "Create Patient", description = "The FHIR Patient resource defines demographics, care providers, " +
                     "and other administrative information about a person receiving care at a health organization. " +
                     "The Patient.Create web service creates a new patient record or returns an existing one:\n" +
                     "\n" +
