@@ -22,20 +22,9 @@ public class test {
 
     public static void main(String[] args) throws Exception {
 
-        /*String url = "https://authorization.cerner.com/";
-        String clientId = "0bcd3578-0e3b-46e5-81f8-36baebf63c49";
-        String clientSecret = "vlg4zf0T4jWDzAecst415g7leEKVG2sr";
-        String ehrSourceId = "ec2458f2-1e24-41c8-b71b-0e701af7583d";
-
-        String response = HTTPRequest.oAuthMethodSecret(url, clientId, clientSecret, ehrSourceId);
-        Object obj = new JSONParser().parse(response);
-        JSONObject jsonResponse = (JSONObject) obj;
-        String accessToken = (String) jsonResponse.get("access_token");
-        System.out.println(accessToken);*/
-
 
         //***************EPIC Sandbox params**********************
-        String clientId = "c35e8cd6-a648-43aa-90f3-87970c3edbc4";
+        String clientId = "6eb6db5e-c14a-4060-ba4a-b621855ab07a";
         String url = "https://fhir.epic.com/interconnect-fhir-oauth/";
 
         String authURL = url + "oauth2/token";
@@ -70,12 +59,15 @@ public class test {
         JSONObject jsonResponse = (JSONObject) obj;
         String accessToken = (String) jsonResponse.get("access_token");
         //System.out.println(accessToken);
-        //List<Value> map = FHIRActions.searchHealthConcern(url, "Bearer " + accessToken, "exXRmhbBlDmkQs7JHPE37Yw3", "");
-        //String coverageUrl = url + "api/FHIR/R4/Coverage/" + "e--AhULNwGXGTDcZWtA3mVZpExBlu51LQoy5Fgus54Tk3";
-        Map<String, Value> resMap = FHIRActions.readCoverage(url, "Bearer " + accessToken, "e--AhULNwGXGTDcZWtA3mVZpExBlu51LQoy5Fgus54Tk3");
+
+        //String allergyinfo = HTTPRequest.HttpGetWithParams(url + "api/FHIR/R4/AllergyIntolerance?patient=e63wRTbPfr1p8UW81d8Seiw3&clinical-status=active", "Bearer " + accessToken, null);
+
+        List<Value> map = FHIRActions.searchHealthConcern(url, "Bearer " + accessToken, "exXRmhbBlDmkQs7JHPE37Yw3", "active");
+        //String coverageUrl = url + "api/FHIR/R4/Flag/erEwpagBquISLpnVVsNdUVeXy4Ik1.oYWPByJ4WN9FxY3";
+        //Map<String, Value> resMap = FHIRActions.readHealthConcern(url, "Bearer " + accessToken, "erEwpagBquISLpnVVsNdUVeXy4Ik1.oYWPByJ4WN9FxY3");
 
         //String coverageResponse = HTTPRequest.HttpGetWithParams(coverageUrl, "Bearer " + accessToken, null);
-        System.out.println(resMap);
+        System.out.println(map);
 
         /*Map<String, String> params = new LinkedHashMap<>();
         params.put("ssn", "161-96-0987");

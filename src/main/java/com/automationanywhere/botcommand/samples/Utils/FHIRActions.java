@@ -1,5 +1,6 @@
 package com.automationanywhere.botcommand.samples.Utils;
 
+import com.automationanywhere.bot.service.Bot;
 import com.automationanywhere.botcommand.data.Value;
 import com.automationanywhere.botcommand.data.impl.DictionaryValue;
 import com.automationanywhere.botcommand.data.impl.StringValue;
@@ -22,59 +23,63 @@ public class FHIRActions {
         Map<String, Value> resMap = new LinkedHashMap<>();
 
         String searchResponse = HTTPRequest.HttpGetWithParams(patientUrl, auth, params);
-        Object obj = new JSONParser().parse(searchResponse);
-        JSONObject response = (JSONObject) obj;
-        resMap.put("results", (new StringValue(String.valueOf(response.get("total")))));
-        JSONArray entries = (JSONArray) response.get("entry");
-        if(String.valueOf(response.get("total")).equals("0")){
-            //The search didn't return any results, so report back the message
-            JSONObject firstEntry = (JSONObject) entries.get(0);
-            JSONObject resource = (JSONObject) firstEntry.get("resource");
-            JSONArray issue = (JSONArray) resource.get("issue");
-            JSONObject firstIssue = (JSONObject) issue.get(0);
-            JSONObject details = (JSONObject) firstIssue.get("details");
-            String text = (String) details.get("text");
-            resMap.put("message", new StringValue(text));
-        }
-        else{
-            //Code to parse entries/list of results
-            for (int i=0; i < entries.size(); i++){
-                JSONObject entry = (JSONObject) entries.get(i);
-                JSONObject resource = (JSONObject) entry.get("resource");
-                resMap.put("id", new StringValue(String.valueOf(resource.get("id"))));
-                JSONArray names = (JSONArray) resource.get("name");
-                JSONObject name = (JSONObject) names.get(0); //only getting first name object
-                resMap.put("name", new StringValue(String.valueOf(name.get("text"))));
-                resMap.put("gender", new StringValue(String.valueOf(resource.get("gender"))));
-                JSONObject maritalStatus = (JSONObject) resource.get("maritalStatus");
-                resMap.put("maritalStatus", new StringValue(String.valueOf(maritalStatus.get("text"))));
-                resMap.put("birthDate", new StringValue(String.valueOf(resource.get("birthDate"))));
-                //get home address
-                JSONArray addresses = (JSONArray) resource.get("address");
-                for (int j=0; j < addresses.size(); j++){
-                    JSONObject address = (JSONObject) addresses.get(j);
-                    if(String.valueOf(address.get("use")).equals("home")){
-                        List streets = (List) address.get("line");
-                        String street = (String) streets.get(0);
-                        resMap.put("street", new StringValue(street));
-                        resMap.put("city", new StringValue(String.valueOf(address.get("city"))));
-                        resMap.put("state", new StringValue(String.valueOf(address.get("state"))));
-                        resMap.put("postalCode", new StringValue(String.valueOf(address.get("postalCode"))));
-                        resMap.put("country", new StringValue(String.valueOf(address.get("country"))));
-                    } else {
-                        resMap.put("street", new StringValue("no home address found"));
-                        resMap.put("city", new StringValue(String.valueOf(address.get("no home address found"))));
-                        resMap.put("state", new StringValue(String.valueOf(address.get("no home address found"))));
-                        resMap.put("postalCode", new StringValue(String.valueOf(address.get("no home address found"))));
-                        resMap.put("country", new StringValue(String.valueOf(address.get("no home address found"))));
+        try {
+            Object obj = new JSONParser().parse(searchResponse);
+            JSONObject response = (JSONObject) obj;
+            resMap.put("results", (new StringValue(String.valueOf(response.get("total")))));
+            JSONArray entries = (JSONArray) response.get("entry");
+            if (String.valueOf(response.get("total")).equals("0")) {
+                //The search didn't return any results, so report back the message
+                JSONObject firstEntry = (JSONObject) entries.get(0);
+                JSONObject resource = (JSONObject) firstEntry.get("resource");
+                JSONArray issue = (JSONArray) resource.get("issue");
+                JSONObject firstIssue = (JSONObject) issue.get(0);
+                JSONObject details = (JSONObject) firstIssue.get("details");
+                String text = (String) details.get("text");
+                resMap.put("message", new StringValue(text));
+            } else {
+                //Code to parse entries/list of results
+                for (int i = 0; i < entries.size(); i++) {
+                    JSONObject entry = (JSONObject) entries.get(i);
+                    JSONObject resource = (JSONObject) entry.get("resource");
+                    resMap.put("id", new StringValue(String.valueOf(resource.get("id"))));
+                    JSONArray names = (JSONArray) resource.get("name");
+                    JSONObject name = (JSONObject) names.get(0); //only getting first name object
+                    resMap.put("name", new StringValue(String.valueOf(name.get("text"))));
+                    resMap.put("gender", new StringValue(String.valueOf(resource.get("gender"))));
+                    JSONObject maritalStatus = (JSONObject) resource.get("maritalStatus");
+                    resMap.put("maritalStatus", new StringValue(String.valueOf(maritalStatus.get("text"))));
+                    resMap.put("birthDate", new StringValue(String.valueOf(resource.get("birthDate"))));
+                    //get home address
+                    JSONArray addresses = (JSONArray) resource.get("address");
+                    for (int j = 0; j < addresses.size(); j++) {
+                        JSONObject address = (JSONObject) addresses.get(j);
+                        if (String.valueOf(address.get("use")).equals("home")) {
+                            List streets = (List) address.get("line");
+                            String street = (String) streets.get(0);
+                            resMap.put("street", new StringValue(street));
+                            resMap.put("city", new StringValue(String.valueOf(address.get("city"))));
+                            resMap.put("state", new StringValue(String.valueOf(address.get("state"))));
+                            resMap.put("postalCode", new StringValue(String.valueOf(address.get("postalCode"))));
+                            resMap.put("country", new StringValue(String.valueOf(address.get("country"))));
+                        } else {
+                            resMap.put("street", new StringValue("no home address found"));
+                            resMap.put("city", new StringValue(String.valueOf(address.get("no home address found"))));
+                            resMap.put("state", new StringValue(String.valueOf(address.get("no home address found"))));
+                            resMap.put("postalCode", new StringValue(String.valueOf(address.get("no home address found"))));
+                            resMap.put("country", new StringValue(String.valueOf(address.get("no home address found"))));
+                        }
                     }
+                    //phone number
+                    JSONArray telecom = (JSONArray) resource.get("telecom");
+                    JSONObject phoneInfo = (JSONObject) telecom.get(0); //getting only first result
+                    resMap.put("phone", new StringValue(String.valueOf(phoneInfo.get("value"))));
+                    break; //ignoring array right now...
                 }
-                //phone number
-                JSONArray telecom = (JSONArray) resource.get("telecom");
-                JSONObject phoneInfo = (JSONObject) telecom.get(0); //getting only first result
-                resMap.put("phone", new StringValue(String.valueOf(phoneInfo.get("value"))));
-                break; //ignoring array right now...
             }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain patient info or responded unexpectedly. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
         }
         return resMap;
     }
@@ -152,39 +157,48 @@ public class FHIRActions {
         Map<String, Value> resMap = new LinkedHashMap<>();
 
         String coverageResponse = HTTPRequest.HttpGetWithParams(coverageUrl, auth, null);
-        Object obj = new JSONParser().parse(coverageResponse);
-        JSONObject response = (JSONObject) obj;
-        //System.out.println(response);
-        //subscriber
-        JSONObject subscriber = (JSONObject) response.get("subscriber");
-        resMap.put("subscriber", new StringValue(String.valueOf(subscriber.get("display"))));
-        if(subscriber.containsKey("reference")) {
-            String patientID = (String) subscriber.get("reference");
-            String patientFHIRId = patientID.split("/")[1];
-            resMap.put("patientFHIRId", new StringValue(patientFHIRId));
-        } else{ resMap.put("patientFHIRId", new StringValue("No Value")); }
-        //coverage period
-        JSONObject period = (JSONObject) response.get("period");
-        resMap.put("coverageStart", new StringValue(String.valueOf(period.get("start"))));
-        resMap.put("coverageEnd", new StringValue(String.valueOf(period.get("end"))));
-        //payer
-        JSONArray payors = (JSONArray) response.get("payor");
-        if( payors.size() >= 1) {
-            JSONObject payer = (JSONObject) payors.get(0); //only getting first payor right now...
-            resMap.put("payer", new StringValue(String.valueOf(payer.get("display"))));
-        } else { resMap.put("payer", new StringValue("No value for payer found")); }
-        //beneficiary
-        JSONObject beneficiary = (JSONObject) response.get("beneficiary");
-        resMap.put("beneficiary", new StringValue(String.valueOf(beneficiary.get("display"))));
-        //subscriber ID
-        resMap.put("subscriberID", new StringValue(String.valueOf(response.get("subscriberId"))));
-        //relationship
-        if(response.containsKey("relationship")) {
-            JSONObject relationship = (JSONObject) response.get("relationship");
-            resMap.put("relationship", new StringValue(String.valueOf(relationship.get("text"))));
+        try {
+            Object obj = new JSONParser().parse(coverageResponse);
+            JSONObject response = (JSONObject) obj;
+            //System.out.println(response);
+            //subscriber
+            JSONObject subscriber = (JSONObject) response.get("subscriber");
+            resMap.put("subscriber", new StringValue(String.valueOf(subscriber.get("display"))));
+            if (subscriber.containsKey("reference")) {
+                String patientID = (String) subscriber.get("reference");
+                String patientFHIRId = patientID.split("/")[1];
+                resMap.put("patientFHIRId", new StringValue(patientFHIRId));
+            } else {
+                resMap.put("patientFHIRId", new StringValue("No Value"));
+            }
+            //coverage period
+            JSONObject period = (JSONObject) response.get("period");
+            resMap.put("coverageStart", new StringValue(String.valueOf(period.get("start"))));
+            resMap.put("coverageEnd", new StringValue(String.valueOf(period.get("end"))));
+            //payer
+            JSONArray payors = (JSONArray) response.get("payor");
+            if (payors.size() >= 1) {
+                JSONObject payer = (JSONObject) payors.get(0); //only getting first payor right now...
+                resMap.put("payer", new StringValue(String.valueOf(payer.get("display"))));
+            } else {
+                resMap.put("payer", new StringValue("No value for payer found"));
+            }
+            //beneficiary
+            JSONObject beneficiary = (JSONObject) response.get("beneficiary");
+            resMap.put("beneficiary", new StringValue(String.valueOf(beneficiary.get("display"))));
+            //subscriber ID
+            resMap.put("subscriberID", new StringValue(String.valueOf(response.get("subscriberId"))));
+            //relationship
+            if (response.containsKey("relationship")) {
+                JSONObject relationship = (JSONObject) response.get("relationship");
+                resMap.put("relationship", new StringValue(String.valueOf(relationship.get("text"))));
+            } else {
+                resMap.put("relationship", new StringValue("No Value"));
+            }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain coverage info or responded unexpectedly. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
         }
-        else{ resMap.put("relationship", new StringValue("No Value")); }
-        //Patient FHIR ID
 
         return resMap;
     }
@@ -194,15 +208,20 @@ public class FHIRActions {
         List<Value> coverageIds = new ArrayList<>();
 
         String coverageResponse = HTTPRequest.HttpGetWithParams(coverageUrl, auth, null);
-        Object obj = new JSONParser().parse(coverageResponse);
-        JSONObject response = (JSONObject) obj;
-        //System.out.println(response);
-        //entry list
-        JSONArray entries = (JSONArray) response.get("entry");
-        for (int i=0; i < entries.size(); i++) {
-            JSONObject entry = (JSONObject) entries.get(i);
-            JSONObject resource = (JSONObject) entry.get("resource");
-            coverageIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+        try {
+            Object obj = new JSONParser().parse(coverageResponse);
+            JSONObject response = (JSONObject) obj;
+            //System.out.println(response);
+            //entry list
+            JSONArray entries = (JSONArray) response.get("entry");
+            for (int i = 0; i < entries.size(); i++) {
+                JSONObject entry = (JSONObject) entries.get(i);
+                JSONObject resource = (JSONObject) entry.get("resource");
+                coverageIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+            }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain coverage IDs or responded unexpectedly. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
         }
         return coverageIds;
     }
@@ -212,23 +231,111 @@ public class FHIRActions {
         List<Value> healthConcernIds = new ArrayList<>();
 
         String coverageResponse = HTTPRequest.HttpGetWithParams(flagUrl, auth, null);
-        System.out.println(coverageResponse);
-        Object obj = new JSONParser().parse(coverageResponse);
-        JSONObject response = (JSONObject) obj;
-        //System.out.println(response);
-        //entry list
-        JSONArray entries = (JSONArray) response.get("entry");
-        for (int i=0; i < entries.size(); i++) {
-            JSONObject entry = (JSONObject) entries.get(i);
-            JSONObject resource = (JSONObject) entry.get("resource");
-            healthConcernIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+        try {
+            Object obj = new JSONParser().parse(coverageResponse);
+            JSONObject response = (JSONObject) obj;
+            //entry list
+            JSONArray entries = (JSONArray) response.get("entry");
+            for (int i = 0; i < entries.size(); i++) {
+                JSONObject entry = (JSONObject) entries.get(i);
+                JSONObject resource = (JSONObject) entry.get("resource");
+                healthConcernIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+            }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain health concern IDs or responded unexpectedly. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
         }
         return healthConcernIds;
     }
 
-    public static String searchListAllergy (String url, String auth, String patientID) throws IOException, ParseException {
-        String listURL = url + "api/FHIR/R4/List?code=allergies&patient=" + patientID;
-        String response = HTTPRequest.HttpGetWithParams(listURL, auth, null);
-        return response;
+    public static Map<String, Value> readHealthConcern(String url, String auth, String fhirID) throws IOException, ParseException {
+        String allergyUrl = url + "api/FHIR/R4/Flag/" + fhirID;
+        Map<String, Value> resMap = new LinkedHashMap<>();
+
+        String coverageResponse = HTTPRequest.HttpGetWithParams(allergyUrl, auth, null);
+        try {
+            Object obj = new JSONParser().parse(coverageResponse);
+            JSONObject response = (JSONObject) obj;
+            //System.out.println(response);
+            //description
+            JSONObject code = (JSONObject) response.get("code");
+            resMap.put("description", new StringValue(String.valueOf(code.get("text"))));
+            //category
+            JSONArray category = (JSONArray) response.get("category");
+            JSONObject cat = (JSONObject) category.get(0);
+            resMap.put("category", new StringValue(String.valueOf(cat.get("text"))));
+            //patient
+            JSONObject patient = (JSONObject) response.get("subject");
+            resMap.put("patient", new StringValue(String.valueOf(patient.get("display"))));
+            //period
+            JSONObject onset = (JSONObject) response.get("period");
+            resMap.put("period", new StringValue(String.valueOf(onset.get("start"))));
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain health concern info or responded unexpectedly. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
+        }
+
+        return resMap;
     }
+
+    public static List<Value> searchAllergyIntolerance (String url, String auth, String patientID) throws IOException, ParseException {
+        String allergyURL = url + "api/FHIR/R4/AllergyIntolerance?patient=" + patientID + "&clinical-status=active";
+        List<Value> allergyIds = new ArrayList<>();
+
+        String response = HTTPRequest.HttpGetWithParams(allergyURL, auth, null);
+        try{
+            Object obj = new JSONParser().parse(response);
+            JSONObject json = (JSONObject) obj;
+            //System.out.println(response);
+            //entry list
+            JSONArray entries = (JSONArray) json.get("entry");
+            for (int i = 0; i < entries.size(); i++) {
+                JSONObject entry = (JSONObject) entries.get(i);
+                JSONObject resource = (JSONObject) entry.get("resource");
+                allergyIds.add(new StringValue(String.valueOf(resource.get("id")))); //add StringValue to list
+            }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain any allergy info. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
+        }
+        return allergyIds;
+    }
+
+    public static Map<String, Value> readAllergyIntolerance(String url, String auth, String fhirID) throws IOException, ParseException {
+        String allergyUrl = url + "api/FHIR/R4/AllergyIntolerance/" + fhirID;
+        Map<String, Value> resMap = new LinkedHashMap<>();
+
+        String coverageResponse = HTTPRequest.HttpGetWithParams(allergyUrl, auth, null);
+        try {
+            Object obj = new JSONParser().parse(coverageResponse);
+            JSONObject response = (JSONObject) obj;
+            //System.out.println(response);
+            //description
+            JSONObject code = (JSONObject) response.get("code");
+            resMap.put("description", new StringValue(String.valueOf(code.get("text"))));
+            //category
+            JSONArray category = (JSONArray) response.get("category");
+            String cat = (String) category.get(0);
+            resMap.put("category", new StringValue(cat));
+            //patient
+            JSONObject patient = (JSONObject) response.get("patient");
+            resMap.put("patient", new StringValue(String.valueOf(patient.get("display"))));
+            //onsetPeriod
+            JSONObject onset = (JSONObject) response.get("onsetPeriod");
+            resMap.put("onset", new StringValue(String.valueOf(onset.get("start"))));
+            //reaction
+            if (response.containsKey("reaction")) {
+                JSONArray reaction = (JSONArray) response.get("reaction");
+                JSONObject manifestation = (JSONObject) reaction.get(0);
+                resMap.put("reaction", new StringValue(String.valueOf(manifestation.get("description"))));
+            } else {
+                resMap.put("reaction", new StringValue("No reaction description provided"));
+            }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain allergy info or responded unexpectedly. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
+        }
+        return resMap;
+    }
+
 }

@@ -4,8 +4,8 @@
     "description": "[[description]]",
     "group": "com.automationanywhere",
     "artifactName": "FHIR",
-    "packageVersion": "1.0.0-20211117-083449",
-    "codeVersion": "1.0.0-20211117-083449",
+    "packageVersion": "1.0.0-20211118-091657",
+    "codeVersion": "1.0.0-20211118-091657",
     "author": "",
     "commands": [
         {
@@ -315,6 +315,56 @@
             ]
         },
         {
+            "name": "ReadAllergyIntolerance",
+            "label": "Allergy Lookup",
+            "description": "Returns Allergy Details",
+            "nodeLabel": "Read allergy intolerance in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.ReadAllergyCommand",
+            "groupLabel": "Allergy",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "DICTIONARY",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a dictionary",
+            "returnRequired": false,
+            "returnDescription": "Keys for dictionary: 'description', 'catergory', 'patient', 'onset', 'reaction'",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "Read Allergy",
+                    "description": "Retrieves allergy resource by its FHIR ID.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "fhirId",
+                    "label": "FHIR ID",
+                    "description": "The FHIR Allergy Intolerance ID",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "ReadCoverage",
             "label": "Coverage Lookup",
             "description": "Returns Coverage Details",
@@ -355,6 +405,105 @@
                     "name": "fhirId",
                     "label": "FHIR ID",
                     "description": "The FHIR Coverage ID",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ReadHealthConcern",
+            "label": "Health Concern Lookup",
+            "description": "Returns Health Concern Details",
+            "nodeLabel": "Read health concern in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.ReadHealthConcernCommand",
+            "groupLabel": "Flag",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "DICTIONARY",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a dictionary",
+            "returnRequired": false,
+            "returnDescription": "Keys for dictionary: 'description', 'category', 'patient', 'period'",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "Read Allergy",
+                    "description": "Retrieves allergy resource by its FHIR ID.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "fhirId",
+                    "label": "FHIR ID",
+                    "description": "The FHIR Health Concern ID",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "SearchAllergy",
+            "label": "Allergy Intolerance Search",
+            "description": "Returns Allergy Intolerance FHIR IDs",
+            "nodeLabel": "Search allergy intolerances by patient in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.SearchAllergyCommand",
+            "groupLabel": "Allergy",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "LIST",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a list",
+            "returnRequired": false,
+            "returnDescription": "List of strings containing the found allergy intolerance FHIR IDs",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "ALlergy Intolerance Search",
+                    "description": "Searches for Allergy Intolerance resources.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "patientId",
+                    "label": "Patient FHIR ID",
                     "type": "TEXT",
                     "rules": [
                         {
@@ -415,6 +564,78 @@
                     "name": "beneficiaryId",
                     "label": "Beneficiary FHIR ID",
                     "type": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "SearchHealthConcern",
+            "label": "Health Concern Search",
+            "description": "Returns List of Health Concern FHIR IDs",
+            "nodeLabel": "Search health concerns by patient in FHIR session {{sessionName}}",
+            "minimumControlRoomVersion": "8750",
+            "minimumBotAgentVersion": "20.11",
+            "mainClass": "com.automationanywhere.botcommand.samples.commands.basic.SearchHealthConcernCommand",
+            "groupLabel": "Flag",
+            "icon": "fhir2.svg",
+            "comment": true,
+            "returnType": "LIST",
+            "returnSubtype": "UNDEFINED",
+            "returnLabel": "Assign output to a list",
+            "returnRequired": false,
+            "returnDescription": "List of strings containing the found health concern FHIR IDs",
+            "attributes": [
+                {
+                    "name": "help",
+                    "label": "Health Concern Search",
+                    "description": "Searches for Flag/Health Concern resources.",
+                    "type": "HELP"
+                },
+                {
+                    "name": "sessionName",
+                    "label": "Session name",
+                    "type": "TEXT",
+                    "defaultValue": {
+                        "string": "Default",
+                        "type": "STRING"
+                    },
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "patientId",
+                    "label": "Patient FHIR ID",
+                    "type": "TEXT",
+                    "rules": [
+                        {
+                            "name": "NOT_EMPTY"
+                        }
+                    ]
+                },
+                {
+                    "name": "status",
+                    "label": "Status",
+                    "type": "SELECT",
+                    "defaultValue": {
+                        "string": "active",
+                        "type": "STRING"
+                    },
+                    "options": [
+                        {
+                            "label": "Active",
+                            "value": "active"
+                        },
+                        {
+                            "label": "Inactive",
+                            "value": "inactive"
+                        },
+                        {
+                            "label": "Entered in error",
+                            "value": "entered in error"
+                        }
+                    ]
                 }
             ]
         }
