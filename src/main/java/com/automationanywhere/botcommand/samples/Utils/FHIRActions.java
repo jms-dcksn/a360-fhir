@@ -5,12 +5,12 @@ import com.automationanywhere.botcommand.data.Value;
 import com.automationanywhere.botcommand.data.impl.DictionaryValue;
 import com.automationanywhere.botcommand.data.impl.StringValue;
 import com.automationanywhere.botcommand.exception.BotCommandException;
-import org.apache.velocity.runtime.directive.Parse;
+//import org.apache.velocity.runtime.directive.Parse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.opensaml.xml.signature.J;
+//import org.opensaml.xml.signature.J;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -337,5 +337,94 @@ public class FHIRActions {
         }
         return resMap;
     }
+
+    public static List<Value> searchAppointments (String url, String auth, String startTime, String endTime, String symptom) throws IOException, ParseException {
+        String apptUrl = url + "api/FHIR/STU3/Appointment/$find";
+        List<Value> appointmentInfo = new ArrayList<>();
+
+        //****************raw body for demo*********************
+        String apptBody = "{\"resourceType\":\"Parameters\",\"parameter\":[{\"name\":\"patient\",\"resource\":" +
+                "{\"resourceType\":\"Patient\",\"extension\":[{\"valueCode\":\"M\",\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex\"}," +
+                "{\"extension\":[{\"valueCoding\":{\"system\":\"http://hl7.org/fhir/us/core/ValueSet/omb-race-category\",\"code\":\"2106-3\",\"display\":\"White\"},\"url\":\"ombCategory\"}," +
+                "{\"valueString\":\"White\",\"url\":\"text\"}],\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race\"}," +
+                "{\"extension\":[{\"valueCoding\":{\"system\":\"http://hl7.org/fhir/us/core/ValueSet/omb-ethnicity-category\",\"code\":\"UNK\",\"display\":\"Unknown\"}," +
+                "\"url\":\"ombCategory\"},{\"valueString\":\"Unknown\",\"url\":\"text\"}],\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity\"}]," +
+                "\"identifier\":[{\"use\":\"usual\",\"type\":{\"text\":\"EPIC\"},\"system\":\"urn:oid:1.2.840.114350.1.1\",\"value\":\"E3423\"}," +
+                "{\"use\":\"usual\",\"type\":{\"text\":\"MRN\"},\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.14\",\"value\":\"203177\"}],\"active\":true," +
+                "\"name\":[{\"use\":\"usual\",\"text\":\"Correct Professional Billing\",\"family\":\"Professional Billing\",\"given\":[\"Correct\"]}]," +
+                "\"telecom\":[{\"system\":\"phone\",\"value\":\"608-271-9000\",\"use\":\"home\"},{\"system\":\"phone\",\"value\":\"608-271-9000\",\"use\":\"work\"}]," +
+                "\"gender\":\"male\",\"birthDate\":\"1983-06-08\",\"deceasedBoolean\":false," +
+                "\"address\":[{\"use\":\"home\",\"line\":[\"1979 Milky Way\"],\"city\":\"VERONA\",\"district\":\"DANE\",\"state\":\"WI\",\"postalCode\":\"53593\",\"country\":\"US\"}]," +
+                "\"maritalStatus\":{\"text\":\"Single\"},\"communication\":[{\"language\":{\"coding\":[{\"system\":\"http://hl7.org/fhir/ValueSet/languages\",\"code\":\"en\",\"display\":\"English\"}],\"text\":\"English\"},\"preferred\":true}]," +
+                "\"generalPractitioner\":[{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Practitioner/eM5CWtq15N0WJeuCet5bJlQ3\",\"display\":\"Physician Family Medicine, MD\"}]," +
+                "\"managingOrganization\":{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Organization/enRyWnSP963FYDpoks4NHOA3\"," +
+                "\"display\":\"Epic Hospital System\"}}}," +
+/*appt Time*/   "{\"name\":\"startTime\",\"valueDateTime\":\"" + startTime + "\"},{\"name\":\"endTime\",\"valueDateTime\":\"" + endTime + "\"}," +
+                "{\"name\":\"service-type\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.3.808267.11\",\"code\":\"95014\",\"display\":\"Office Visit\"}]}}," +
+                "{\"name\":\"indications\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:2.16.840.1.113883.6.96\",\"code\":\"46866001\",\"display\":\"Fracture of lower limb (disorder)\"}," +
+                "{\"system\":\"urn:oid:2.16.840.1.113883.6.90\",\"code\":\"S82.90XA\",\"display\":\"Broken arm\"}," +
+                "{\"system\":\"urn:oid:1.2.840.114350.1.13.861.1.7.2.696871\",\"code\":\"121346631\",\"display\":\"Broken arm\"}]," +
+                "\"text\":\"Broken arm\"}},{\"name\":\"location-reference\",\"valueReference\":{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Location/e4W4rmGe9QzuGm2Dy4NBqVc0KDe6yGld6HW95UuN-Qd03\"}}]}";
+        //*******************************************************
+
+        String response = HTTPRequest.Request(apptUrl,auth,"POST", apptBody);
+        try{
+            Object obj = new JSONParser().parse(response);
+            JSONObject json = (JSONObject) obj;
+            //System.out.println(response);
+            //entry list
+            JSONArray entries = (JSONArray) json.get("entry");
+            for (int i = 0; i < entries.size(); i++) {
+                Map<String, Value> apptDetails = new LinkedHashMap<>();
+                JSONObject entry = (JSONObject) entries.get(i);
+                JSONObject resource = (JSONObject) entry.get("resource");
+                apptDetails.put("id", new StringValue(String.valueOf(resource.get("id"))));
+                apptDetails.put("startTime", new StringValue(String.valueOf(resource.get("start"))));
+                apptDetails.put("endTime", new StringValue(String.valueOf(resource.get("end"))));
+                appointmentInfo.add(new DictionaryValue(apptDetails));
+            }
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain any appointment info. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
+        }
+        return appointmentInfo;
+    }
+
+    public static DictionaryValue bookAppointment (String url, String auth, String appointmentId) throws IOException, ParseException {
+        String apptUrl = url + "api/FHIR/STU3/Appointment/$book";
+
+
+        //****************raw body for demo*********************
+        String apptBookBody = "{\"resourceType\": \"Parameters\",\"parameter\": [{\"name\": \"patient\",\"valueIdentifier\": " +
+                "{\"value\": \"eq081-VQEgP8drUUqCWzHfw3\"}},{\"name\": \"appointment\",\"valueIdentifier\": {\"value\": \""+ appointmentId + "\"}},{\n" +
+                "\"name\": \"appointmentNote\",\"valueString\": \"Note text containing info related to the appointment.\"}]}";
+        //*******************************************************
+
+        String response = HTTPRequest.Request(apptUrl,auth,"POST", apptBookBody);
+        Map<String, Value> resMap = new LinkedHashMap<>();
+        try{
+            Object obj = new JSONParser().parse(response);
+            JSONObject json = (JSONObject) obj;
+            JSONArray entries = (JSONArray) json.get("entry");
+            JSONObject entry = (JSONObject) entries.get(0);
+            JSONObject resource = (JSONObject) entry.get("resource");
+            resMap.put("id", new StringValue(String.valueOf(resource.get("id"))));
+            resMap.put("status", new StringValue(String.valueOf(resource.get("status"))));
+            resMap.put("start", new StringValue(String.valueOf(resource.get("start"))));
+            resMap.put("end", new StringValue(String.valueOf(resource.get("end"))));
+            resMap.put("minutesDuration", new StringValue(String.valueOf(resource.get("minutesDuration"))));
+            resMap.put("created", new StringValue(String.valueOf(resource.get("created"))));
+            JSONArray serviceTypes = (JSONArray) resource.get("serviceType");
+            JSONObject serviceType = (JSONObject) serviceTypes.get(0);
+            JSONArray codings = (JSONArray) serviceType.get("coding");
+            JSONObject coding = (JSONObject) codings.get(0);
+            resMap.put("serviceType", new StringValue(String.valueOf(coding.get("display"))));
+        } catch (Exception e) {
+            throw new BotCommandException("The response from the FHIR server didn't contain any appointment info. Check your inputs and ensure " +
+                    "your app is authorized to access this resource. Error: " + e);
+        }
+        return new DictionaryValue(resMap);
+    }
+
 
 }

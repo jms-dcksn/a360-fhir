@@ -26,12 +26,14 @@ import java.util.Objects;
 
 public class HTTPRequest {
 
-    public static String Request(String url, String method, String auth) throws IOException, ParseException {
+    public static String Request(String url, String auth, String method, String body) throws IOException, ParseException {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody requestBody = RequestBody.create(mediaType, body);
         Request request = new Request.Builder()
                 .url(url)
-                .method(method, null)
+                .method(method, requestBody)
                 .addHeader("Authorization", auth)
                 .addHeader("Accept", "application/fhir+json")
                 //.addHeader("Cookie", "BIGipServerpool_dev117003=427929098.59456.0000; JSESSIONID=7F99F03A11EAD961AAFC4987A02DFA05; glide_session_store=6FFDE7AB1B2230104B7A0F26624BCBD4; glide_user_activity=U0N2MzorNXZYeFJncVo4eUNZZjZVMUhQZG5tOEhBdjBFa1BWdjo3b09lNkRqT016d2VJbTNHeVZBSENBQ3dmTDVlOTJ3ZURrUklwSU50blM4PQ==; glide_user_route=glide.73d6d0a9ea8868a1a5a301c9c850c8cf")
@@ -56,7 +58,7 @@ public class HTTPRequest {
                 httpBuilder.addQueryParameter(param.getKey(),param.getValue());
             }
         }
-        System.out.println(httpBuilder.toString());
+        //System.out.println(httpBuilder.toString());
 
         Request request = new Request.Builder()
                 .url(httpBuilder.build())
