@@ -59,7 +59,7 @@ public class test {
         Object obj = new JSONParser().parse(response);
         JSONObject jsonResponse = (JSONObject) obj;
         String accessToken = (String) jsonResponse.get("access_token");
-        System.out.println(accessToken);
+        //System.out.println(accessToken);
 
         //String allergyinfo = HTTPRequest.HttpGetWithParams(url + "api/FHIR/R4/AllergyIntolerance?patient=e63wRTbPfr1p8UW81d8Seiw3&clinical-status=active", "Bearer " + accessToken, null);
 
@@ -68,22 +68,16 @@ public class test {
         String apptBookUrl = url + "api/FHIR/STU3/Appointment/$book";
         //Map<String, Value> resMap = FHIRActions.readHealthConcern(url, "Bearer " + accessToken, "erEwpagBquISLpnVVsNdUVeXy4Ik1.oYWPByJ4WN9FxY3");
         String apptBody = "{\"resourceType\":\"Parameters\",\"parameter\":[{\"name\":\"patient\",\"resource\":" +
-                "{\"resourceType\":\"Patient\",\"extension\":[{\"valueCode\":\"M\",\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex\"}," +
-                "{\"extension\":[{\"valueCoding\":{\"system\":\"http://hl7.org/fhir/us/core/ValueSet/omb-race-category\",\"code\":\"2106-3\",\"display\":\"White\"},\"url\":\"ombCategory\"}," +
-                "{\"valueString\":\"White\",\"url\":\"text\"}],\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race\"}," +
-                "{\"extension\":[{\"valueCoding\":{\"system\":\"http://hl7.org/fhir/us/core/ValueSet/omb-ethnicity-category\",\"code\":\"UNK\",\"display\":\"Unknown\"}," +
-                "\"url\":\"ombCategory\"},{\"valueString\":\"Unknown\",\"url\":\"text\"}],\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity\"}]," +
-                "\"identifier\":[{\"use\":\"usual\",\"type\":{\"text\":\"EPIC\"},\"system\":\"urn:oid:1.2.840.114350.1.1\",\"value\":\"E3423\"}," +
-                "{\"use\":\"usual\",\"type\":{\"text\":\"MRN\"},\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.14\",\"value\":\"203177\"}],\"active\":true," +
+                "{\"resourceType\":\"Patient\",\"active\":true," +
                 "\"name\":[{\"use\":\"usual\",\"text\":\"Correct Professional Billing\",\"family\":\"Professional Billing\",\"given\":[\"Correct\"]}]," +
                 "\"telecom\":[{\"system\":\"phone\",\"value\":\"608-271-9000\",\"use\":\"home\"},{\"system\":\"phone\",\"value\":\"608-271-9000\",\"use\":\"work\"}]," +
                 "\"gender\":\"male\",\"birthDate\":\"1983-06-08\",\"deceasedBoolean\":false," +
                 "\"address\":[{\"use\":\"home\",\"line\":[\"1979 Milky Way\"],\"city\":\"VERONA\",\"district\":\"DANE\",\"state\":\"WI\",\"postalCode\":\"53593\",\"country\":\"US\"}]," +
-                "\"maritalStatus\":{\"text\":\"Single\"},\"communication\":[{\"language\":{\"coding\":[{\"system\":\"http://hl7.org/fhir/ValueSet/languages\",\"code\":\"en\",\"display\":\"English\"}],\"text\":\"English\"},\"preferred\":true}]," +
+                "\"maritalStatus\":{\"text\":\"Single\"}," +
                 "\"generalPractitioner\":[{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Practitioner/eM5CWtq15N0WJeuCet5bJlQ3\",\"display\":\"Physician Family Medicine, MD\"}]," +
                 "\"managingOrganization\":{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Organization/enRyWnSP963FYDpoks4NHOA3\"," +
                 "\"display\":\"Epic Hospital System\"}}}," +
-/*appt Time*/   "{\"name\":\"startTime\",\"valueDateTime\":\"2021-12-22T06:00:00Z\"},{\"name\":\"endTime\",\"valueDateTime\":\"2021-12-22T22:00:00Z\"}," +
+/*appt Time*/   "{\"name\":\"startTime\",\"valueDateTime\":\"2022-2-22T06:00:00Z\"},{\"name\":\"endTime\",\"valueDateTime\":\"2022-2-22T22:00:00Z\"}," +
                 "{\"name\":\"service-type\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.3.808267.11\",\"code\":\"95014\",\"display\":\"Office Visit\"}]}}," +
                 "{\"name\":\"indications\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:2.16.840.1.113883.6.96\",\"code\":\"46866001\",\"display\":\"Fracture of lower limb (disorder)\"}," +
                 "{\"system\":\"urn:oid:2.16.840.1.113883.6.90\",\"code\":\"S82.90XA\",\"display\":\"Broken arm\"}," +
@@ -95,24 +89,42 @@ public class test {
                 "\"name\": \"appointmentNote\",\"valueString\": \"Note text containing info related to the appointment.\"}]}";
 
         //String apptFindResponse = HTTPRequest.Request(apptUrl,"Bearer " + accessToken,"POST", apptBody);
-        DictionaryValue resMap = FHIRActions.bookAppointment(url, "Bearer " + accessToken, "eCIBvgwA6kIwfp1ZpdDIyd8svmrafxw6L3mKwmh0pCfzhTdx7zWzxDl08stOsc-nz3");
+        //DictionaryValue resMap = FHIRActions.bookAppointment(url, "Bearer " + accessToken, "eCIBvgwA6kIwfp1ZpdDIyd8svmrafxw6L3mKwmh0pCfzhTdx7zWzxDl08stOsc-nz3");
         //System.out.println(apptFindResponse);
-        System.out.println(resMap.get());
+        //System.out.println(resMap.get());
 
-        /*Map<String, String> params = new LinkedHashMap<>();
-        params.put("ssn", "161-96-0987");
-        params.put("street", "321 Nora");
-        params.put("city", "Argyle");
-        params.put("postalCode", "76225");
-        params.put("state", "TX");
+        Map<String, String> params = new LinkedHashMap<>();
+        //params.put("ssn", "161-96-0987");
+        params.put("street", "7324 Roosevelt Ave");
+        params.put("city", "INDIANAPOLIS");
+        params.put("postalCode", "46201");
+        params.put("state", "IN");
         params.put("country", "USA");
-        params.put("family", "FHIRcreate");
-        params.put("given", "Bill");
-        params.put("birthDate", "1971-09-08");
+        params.put("family", "Lin");
+        params.put("given", "Derrick");
+        params.put("birthDate", "1973-06-03");
         params.put("gender", "male");
-        params.put("phone", "555-345-5654");
-        params.put("email", "bduncan@healthcare.com");
-        params.put("maritalStatus", "Single");*/
+        params.put("phone", "785-555-5555");
+        params.put("maritalStatus", "Married");
+        String patientResource = FHIRActions.patientResource(params);
+
+        String startTime = "2022-2-22T06:00:00Z";
+        String endTime = "2022-2-22T22:00:00Z";
+
+        String apptBody2 = "{\"resourceType\":\"Parameters\",\"parameter\":[{\"name\":\"patient\",\"resource\":" + patientResource +
+                "}," +
+                /*appt Time*/   "{\"name\":\"startTime\",\"valueDateTime\":\"" + startTime + "\"},{\"name\":\"endTime\",\"valueDateTime\":\"" + endTime + "\"}," +
+                "{\"name\":\"service-type\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.3.808267.11\",\"code\":\"95014\",\"display\":\"Office Visit\"}]}}," +
+                "{\"name\":\"indications\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:2.16.840.1.113883.6.96\",\"code\":\"46866001\",\"display\":\"Fracture of lower limb (disorder)\"}," +
+                "{\"system\":\"urn:oid:2.16.840.1.113883.6.90\",\"code\":\"S82.90XA\",\"display\":\"Broken arm\"}," +
+                "{\"system\":\"urn:oid:1.2.840.114350.1.13.861.1.7.2.696871\",\"code\":\"121346631\",\"display\":\"Broken arm\"}]," +
+                "\"text\":\"Broken arm\"}},{\"name\":\"location-reference\",\"valueReference\":{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Location/e4W4rmGe9QzuGm2Dy4NBqVc0KDe6yGld6HW95UuN-Qd03\"}}]}";
+        //*******************************************************
+        //System.out.println(apptBody2);
+
+        String apptFindResponse = HTTPRequest.Request(apptUrl,"Bearer " + accessToken,"POST", apptBody2);
+        System.out.println(apptFindResponse);
+
 
         /*String fhir_id = FHIRActions.createPatient(url, "Bearer " + accessToken, params);
         System.out.println(fhir_id);*/

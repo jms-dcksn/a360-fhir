@@ -68,9 +68,86 @@ public final class FindAppointmentCommand implements BotCommand {
       }
     }
 
+    if(parameters.containsKey("family") && parameters.get("family") != null && parameters.get("family").get() != null) {
+      convertedParameters.put("family", parameters.get("family").get());
+      if(convertedParameters.get("family") !=null && !(convertedParameters.get("family") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","family", "String", parameters.get("family").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("given") && parameters.get("given") != null && parameters.get("given").get() != null) {
+      convertedParameters.put("given", parameters.get("given").get());
+      if(convertedParameters.get("given") !=null && !(convertedParameters.get("given") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","given", "String", parameters.get("given").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("birthdate") && parameters.get("birthdate") != null && parameters.get("birthdate").get() != null) {
+      convertedParameters.put("birthdate", parameters.get("birthdate").get());
+      if(convertedParameters.get("birthdate") !=null && !(convertedParameters.get("birthdate") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","birthdate", "String", parameters.get("birthdate").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("street") && parameters.get("street") != null && parameters.get("street").get() != null) {
+      convertedParameters.put("street", parameters.get("street").get());
+      if(convertedParameters.get("street") !=null && !(convertedParameters.get("street") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","street", "String", parameters.get("street").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("city") && parameters.get("city") != null && parameters.get("city").get() != null) {
+      convertedParameters.put("city", parameters.get("city").get());
+      if(convertedParameters.get("city") !=null && !(convertedParameters.get("city") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","city", "String", parameters.get("city").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("state") && parameters.get("state") != null && parameters.get("state").get() != null) {
+      convertedParameters.put("state", parameters.get("state").get());
+      if(convertedParameters.get("state") !=null && !(convertedParameters.get("state") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","state", "String", parameters.get("state").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("postal") && parameters.get("postal") != null && parameters.get("postal").get() != null) {
+      convertedParameters.put("postal", parameters.get("postal").get());
+      if(convertedParameters.get("postal") !=null && !(convertedParameters.get("postal") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","postal", "String", parameters.get("postal").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("country") && parameters.get("country") != null && parameters.get("country").get() != null) {
+      convertedParameters.put("country", parameters.get("country").get());
+      if(convertedParameters.get("country") !=null && !(convertedParameters.get("country") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","country", "String", parameters.get("country").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("gender") && parameters.get("gender") != null && parameters.get("gender").get() != null) {
+      convertedParameters.put("gender", parameters.get("gender").get());
+      if(convertedParameters.get("gender") !=null && !(convertedParameters.get("gender") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","gender", "String", parameters.get("gender").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("maritalStatus") && parameters.get("maritalStatus") != null && parameters.get("maritalStatus").get() != null) {
+      convertedParameters.put("maritalStatus", parameters.get("maritalStatus").get());
+      if(convertedParameters.get("maritalStatus") !=null && !(convertedParameters.get("maritalStatus") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","maritalStatus", "String", parameters.get("maritalStatus").get().getClass().getSimpleName()));
+      }
+    }
+
+    if(parameters.containsKey("phone") && parameters.get("phone") != null && parameters.get("phone").get() != null) {
+      convertedParameters.put("phone", parameters.get("phone").get());
+      if(convertedParameters.get("phone") !=null && !(convertedParameters.get("phone") instanceof String)) {
+        throw new BotCommandException(MESSAGES_GENERIC.getString("generic.UnexpectedTypeReceived","phone", "String", parameters.get("phone").get().getClass().getSimpleName()));
+      }
+    }
+
     command.setSessionMap(sessionMap);
     try {
-      Optional<Value> result =  Optional.ofNullable(command.action((String)convertedParameters.get("help"),(String)convertedParameters.get("sessionName"),(String)convertedParameters.get("startTime"),(String)convertedParameters.get("endTime")));
+      Optional<Value> result =  Optional.ofNullable(command.action((String)convertedParameters.get("help"),(String)convertedParameters.get("sessionName"),(String)convertedParameters.get("startTime"),(String)convertedParameters.get("endTime"),(String)convertedParameters.get("family"),(String)convertedParameters.get("given"),(String)convertedParameters.get("birthdate"),(String)convertedParameters.get("street"),(String)convertedParameters.get("city"),(String)convertedParameters.get("state"),(String)convertedParameters.get("postal"),(String)convertedParameters.get("country"),(String)convertedParameters.get("gender"),(String)convertedParameters.get("maritalStatus"),(String)convertedParameters.get("phone")));
       return logger.traceExit(result);
     }
     catch (ClassCastException e) {

@@ -1,11 +1,11 @@
 {
-    "name": "EPIC",
+    "name": "EPIConFHIR",
     "label": "[[label]]",
     "description": "[[description]]",
     "group": "com.automationanywhere",
-    "artifactName": "FHIR",
-    "packageVersion": "1.1.0-20211221-071910",
-    "codeVersion": "1.1.0-20211221-071910",
+    "artifactName": "EPIConFHIR",
+    "packageVersion": "1.1.0-20220113-170943",
+    "codeVersion": "1.1.0-20220113-170943",
     "author": "",
     "commands": [
         {
@@ -186,7 +186,7 @@
                 {
                     "name": "startTime",
                     "label": "Start Time",
-                    "description": "When to start the search",
+                    "description": "When to start the search - must be in ISO Instant format",
                     "type": "TEXT",
                     "rules": [
                         {
@@ -197,7 +197,72 @@
                 {
                     "name": "endTime",
                     "label": "End Time",
-                    "description": "When to end the search",
+                    "description": "When to end the search - must be in ISO Instant format",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "family",
+                    "label": "Family (Last) Name",
+                    "description": "The patient's family (last) name.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "given",
+                    "label": "Given Name",
+                    "description": "The patient's given name. May include first and middle names.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "birthdate",
+                    "label": "Birthdate",
+                    "description": "The patient's date of birth in the format YYYY-MM-DD.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "street",
+                    "label": "Address",
+                    "description": "The patient's street address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "city",
+                    "label": "City",
+                    "description": "The city for patient's home address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "state",
+                    "label": "State",
+                    "description": "The state for the patient's home address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "postal",
+                    "label": "Postal Code",
+                    "description": "The postal code for patient's home address.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "country",
+                    "label": "Country",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "gender",
+                    "label": "Gender",
+                    "description": "The patient\u00e2\u20ac\u2122s legal sex.",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "maritalStatus",
+                    "label": "Marital Status",
+                    "description": "The patient's marital status. e.g. 'single' or 'married'",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "phone",
+                    "label": "Phone",
+                    "description": "The patient's phone number",
                     "type": "TEXT"
                 }
             ]

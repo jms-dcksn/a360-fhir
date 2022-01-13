@@ -338,27 +338,80 @@ public class FHIRActions {
         return resMap;
     }
 
-    public static List<Value> searchAppointments (String url, String auth, String startTime, String endTime, String symptom) throws IOException, ParseException {
+    public static String patientResource(Map<String, String> params){
+        JSONObject body = new JSONObject();
+        body.put("resourceType", "Patient");
+        //Code to build JSON structure for body...
+        body.put("active", "true");
+        //JSON array for name...
+        JSONArray name = new JSONArray();
+        JSONObject nameDetails = new JSONObject();
+        nameDetails.put("use", "usual");
+        nameDetails.put("family", params.get("family"));
+        List<String> givenName = new ArrayList<>();
+        givenName.add(params.get("given"));
+        nameDetails.put("given", givenName);
+        name.add(nameDetails);
+        body.put("name", name);
+        //JSON array for telecom
+        JSONArray telecom = new JSONArray();
+        JSONObject phone = new JSONObject();
+        phone.put("system", "phone");
+        phone.put("value", params.get("phone"));
+        phone.put("use", "home");
+        JSONObject email = new JSONObject();
+        email.put("system", "email");
+        email.put("value", params.get("email"));
+        telecom.add(phone);
+        telecom.add(email);
+        body.put("telecom", telecom);
+
+        body.put("gender", params.get("gender"));
+        body.put("birthDate", params.get("birthDate"));
+        //JSOn Array for address
+        JSONArray address = new JSONArray();
+        JSONObject addressDetails = new JSONObject();
+        addressDetails.put("use", "home");
+        List<String> line = new ArrayList<>();
+        line.add(params.get("street")); //params to hole street address at key 'street'
+        addressDetails.put("line", line);
+        addressDetails.put("city", params.get("city"));
+        addressDetails.put("state", params.get("state"));
+        addressDetails.put("postalCode", params.get("postalCode"));
+        addressDetails.put("country", params.get("country"));
+        address.add(addressDetails);
+        body.put("address", address);
+
+        //marital status
+        JSONObject maritalStatus = new JSONObject();
+        maritalStatus.put("text", params.get("maritalStatus"));
+        body.put("maritalStatus", maritalStatus);
+
+        //generalPractitioner
+        JSONArray generalPractitioner = new JSONArray();
+        JSONObject reference = new JSONObject();
+        reference.put("reference", "https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Practitioner/eM5CWtq15N0WJeuCet5bJlQ3");
+        reference.put("display", "Physician Family Medicine, MD");
+        generalPractitioner.add(reference);
+        body.put("generalPractitioner", generalPractitioner);
+
+        //managingOrganization
+        JSONObject managingOrg = new JSONObject();
+        managingOrg.put("reference", "https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Organization/enRyWnSP963FYDpoks4NHOA3");
+        managingOrg.put("display", "Epic Hospital System");
+
+        return body.toString();
+    }
+
+    public static List<Value> searchAppointments (String url, String auth, String startTime, String endTime, Map<String, String> params) throws IOException, ParseException {
         String apptUrl = url + "api/FHIR/STU3/Appointment/$find";
         List<Value> appointmentInfo = new ArrayList<>();
 
+        String patientResource = patientResource(params);
+
         //****************raw body for demo*********************
-        String apptBody = "{\"resourceType\":\"Parameters\",\"parameter\":[{\"name\":\"patient\",\"resource\":" +
-                "{\"resourceType\":\"Patient\",\"extension\":[{\"valueCode\":\"M\",\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex\"}," +
-                "{\"extension\":[{\"valueCoding\":{\"system\":\"http://hl7.org/fhir/us/core/ValueSet/omb-race-category\",\"code\":\"2106-3\",\"display\":\"White\"},\"url\":\"ombCategory\"}," +
-                "{\"valueString\":\"White\",\"url\":\"text\"}],\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race\"}," +
-                "{\"extension\":[{\"valueCoding\":{\"system\":\"http://hl7.org/fhir/us/core/ValueSet/omb-ethnicity-category\",\"code\":\"UNK\",\"display\":\"Unknown\"}," +
-                "\"url\":\"ombCategory\"},{\"valueString\":\"Unknown\",\"url\":\"text\"}],\"url\":\"http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity\"}]," +
-                "\"identifier\":[{\"use\":\"usual\",\"type\":{\"text\":\"EPIC\"},\"system\":\"urn:oid:1.2.840.114350.1.1\",\"value\":\"E3423\"}," +
-                "{\"use\":\"usual\",\"type\":{\"text\":\"MRN\"},\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.14\",\"value\":\"203177\"}],\"active\":true," +
-                "\"name\":[{\"use\":\"usual\",\"text\":\"Correct Professional Billing\",\"family\":\"Professional Billing\",\"given\":[\"Correct\"]}]," +
-                "\"telecom\":[{\"system\":\"phone\",\"value\":\"608-271-9000\",\"use\":\"home\"},{\"system\":\"phone\",\"value\":\"608-271-9000\",\"use\":\"work\"}]," +
-                "\"gender\":\"male\",\"birthDate\":\"1983-06-08\",\"deceasedBoolean\":false," +
-                "\"address\":[{\"use\":\"home\",\"line\":[\"1979 Milky Way\"],\"city\":\"VERONA\",\"district\":\"DANE\",\"state\":\"WI\",\"postalCode\":\"53593\",\"country\":\"US\"}]," +
-                "\"maritalStatus\":{\"text\":\"Single\"},\"communication\":[{\"language\":{\"coding\":[{\"system\":\"http://hl7.org/fhir/ValueSet/languages\",\"code\":\"en\",\"display\":\"English\"}],\"text\":\"English\"},\"preferred\":true}]," +
-                "\"generalPractitioner\":[{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Practitioner/eM5CWtq15N0WJeuCet5bJlQ3\",\"display\":\"Physician Family Medicine, MD\"}]," +
-                "\"managingOrganization\":{\"reference\":\"https://apporchard.epic.com/interconnect-aocurprd-oauth/api/FHIR/STU3/Organization/enRyWnSP963FYDpoks4NHOA3\"," +
-                "\"display\":\"Epic Hospital System\"}}}," +
+        String apptBody = "{\"resourceType\":\"Parameters\",\"parameter\":[{\"name\":\"patient\",\"resource\":" + patientResource +
+                "}," +
 /*appt Time*/   "{\"name\":\"startTime\",\"valueDateTime\":\"" + startTime + "\"},{\"name\":\"endTime\",\"valueDateTime\":\"" + endTime + "\"}," +
                 "{\"name\":\"service-type\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:1.2.840.114350.1.13.0.1.7.3.808267.11\",\"code\":\"95014\",\"display\":\"Office Visit\"}]}}," +
                 "{\"name\":\"indications\",\"valueCodeableConcept\":{\"coding\":[{\"system\":\"urn:oid:2.16.840.1.113883.6.96\",\"code\":\"46866001\",\"display\":\"Fracture of lower limb (disorder)\"}," +

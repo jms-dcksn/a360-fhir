@@ -8,13 +8,14 @@
         <processorPath useClasspath="false">
           <entry name="$PROJECT_DIR$/libs/command-processor-1.0.0-SNAPSHOT.jar" />
         </processorPath>
-        <module name="FHIR.main" />
+        <module name="EPIConFHIR.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="EPIConFHIR.main" options="--add-exports java.base/sun.security.util=ALL-UNNAMED" />
       <module name="FHIR.main" options="--add-exports java.base/sun.security.util=ALL-UNNAMED" />
     </option>
   </component>
